@@ -1,5 +1,4 @@
 <script>
-  import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { token, user } from '$lib/auth.js';
@@ -14,23 +13,31 @@
   let password = $state('');
   let error = $state('');
   let loading = $state(false);
+  let checking = $state(true);
 
-  onMount(() => {
+  onMount(async () => {
     const urlToken = $page.url.searchParams.get('token');
     if (urlToken) {
       token.set(urlToken);
-      fetch(`${API}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${urlToken}` }
-      })
-        .then(r => r.json())
-        .then(data => {
-          if (data.user) { user.set(data.user); goto('/dashboard'); }
-          else token.set(null);
-        })
-        .catch(() => token.set(null));
+      try {
+        const res = await fetch(`${API}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${urlToken}` }
+        });
+        const data = await res.json();
+        if (data.user) {
+          user.set(data.user);
+          goto('/dashboard');
+          return;
+        }
+      } catch (e) {
+        console.error('Token verification failed', e);
+      }
+      token.set(null);
+    } else if (get(token)) {
+      goto('/dashboard');
       return;
     }
-    if (get(token)) goto('/dashboard');
+    checking = false;
   });
 
   async function submit() {
@@ -63,6 +70,11 @@
   }
 </script>
 
+{#if checking}
+  <div class="checking">
+    <p>Signing you in...</p>
+  </div>
+{:else}
 <div class="page">
   <div class="card">
     <div class="brand">App<span>Two</span></div>
@@ -96,8 +108,10 @@
     </p>
   </div>
 </div>
+{/if}
 
 <style>
+.checking { min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--muted); font-size: 16px; }
 .page { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(ellipse 60% 50% at 80% 20%, rgba(232,132,90,0.1) 0%, transparent 70%), var(--bg); }
 .card { width: 100%; max-width: 400px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px 36px; }
 .brand { font-family: var(--font-display); font-size: 22px; margin-bottom: 28px; color: var(--muted); }

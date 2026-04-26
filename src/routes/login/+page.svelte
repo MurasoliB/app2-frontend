@@ -4,7 +4,7 @@
   import { get } from 'svelte/store';
   import { browser } from '$app/environment';
 
-  const API = 'https://app2-backend-egh4.onrender.com';
+  const API = 'https://app1-backend-ichl.onrender.com';
 
   let mode = $state('login');
   let name = $state('');
@@ -80,7 +80,7 @@
 {:else}
 <div class="page">
   <div class="card">
-    <div class="brand">App<span>Two</span></div>
+    <div class="brand">App<span>One</span></div>
     <h1>{mode === 'login' ? 'Welcome back' : 'Create account'}</h1>
     <p class="sub">{mode === 'login' ? 'Sign in to continue' : 'Join to get started'}</p>
     <form onsubmit={(e) => { e.preventDefault(); submit(); }}>
@@ -115,7 +115,7 @@
 
 <style>
 .checking { min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--muted); font-size: 16px; }
-.page { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(ellipse 60% 50% at 80% 20%, rgba(232,132,90,0.1) 0%, transparent 70%), var(--bg); }
+.page { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(ellipse 60% 50% at 20% 20%, rgba(124,106,247,0.12) 0%, transparent 70%), var(--bg); }
 .card { width: 100%; max-width: 400px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px 36px; }
 .brand { font-family: var(--font-display); font-size: 22px; margin-bottom: 28px; color: var(--muted); }
 .brand span { color: var(--accent-light); }
@@ -124,7 +124,7 @@ h1 { font-family: var(--font-display); font-size: 28px; font-weight: 400; margin
 form { display: flex; flex-direction: column; gap: 16px; }
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field label { font-size: 13px; color: var(--muted); font-weight: 500; }
-.error { color: var(--danger); font-size: 13px; padding: 10px 14px; background: rgba(224,92,92,0.08); border-radius: 8px; border: 1px solid rgba(224,92,92,0.2); }
+.error { color: var(--danger); font-size: 13px; padding: 10px 14px; background: rgba(242,107,107,0.08); border-radius: 8px; border: 1px solid rgba(242,107,107,0.2); }
 .btn-primary { width: 100%; padding: 13px; background: var(--accent); color: #fff; margin-top: 4px; }
 .btn-primary:hover:not(:disabled) { opacity: 0.88; }
 .switch { text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); }

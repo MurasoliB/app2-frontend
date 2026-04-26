@@ -1,9 +1,8 @@
 <script>
   import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
   import { token, user } from '$lib/auth.js';
   import { get } from 'svelte/store';
-  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
 
   const API = 'https://app2-backend-egh4.onrender.com';
 
@@ -15,30 +14,34 @@
   let loading = $state(false);
   let checking = $state(true);
 
-  onMount(async () => {
-    const urlToken = $page.url.searchParams.get('token');
+  if (browser) {
+    const params = new URLSearchParams(window.location.search);
+    const urlToken = params.get('token');
     if (urlToken) {
       token.set(urlToken);
-      try {
-        const res = await fetch(`${API}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${urlToken}` }
-        });
-        const data = await res.json();
+      fetch(`${API}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${urlToken}` }
+      })
+      .then(r => r.json())
+      .then(data => {
         if (data.user) {
           user.set(data.user);
           goto('/dashboard');
-          return;
+        } else {
+          token.set(null);
+          checking = false;
         }
-      } catch (e) {
-        console.error('Token verification failed', e);
-      }
-      token.set(null);
+      })
+      .catch(() => {
+        token.set(null);
+        checking = false;
+      });
     } else if (get(token)) {
       goto('/dashboard');
-      return;
+    } else {
+      checking = false;
     }
-    checking = false;
-  });
+  }
 
   async function submit() {
     error = '';

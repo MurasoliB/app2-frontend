@@ -5,7 +5,7 @@
   import { get } from 'svelte/store';
   import { onMount } from 'svelte';
 
-  const API = import.meta.env.VITE_API_URL;
+  const API = 'https://app2-backend-egh4.onrender.com';
 
   let mode = $state('login');
   let name = $state('');
